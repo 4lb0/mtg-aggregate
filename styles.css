@@ -8,6 +8,7 @@ p{ text-align: justify }
 a{ color: #4457c9; text-decoration: none; }
 .ad{ background-color: #fefeb5; padding: 0.5em; }
 .container{ max-width: 630px; margin: auto; }
+.right{ float: right; }
 @media only screen and (max-width: 640px) {
   .container{ max-width: 90%; }
 }
