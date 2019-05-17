@@ -102,9 +102,9 @@
         return output;
     }
 
-    function handleFileSelect(evt)
+    function handleFileSelect(event)
     {
-        var files = evt.target.files;
+        var files = event.target.files;
         var output = [];
         var allMain = {};
         var allSideboard = {};
