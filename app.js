@@ -151,6 +151,10 @@
         document.body.removeChild(element);
     }
 
-    document.getElementById('decks').addEventListener('change', handleFileSelect, false);
-    document.getElementById('download').addEventListener('click', handleDownloadButton, false);
+    if (window.FileReader) {
+        document.getElementById('decks').addEventListener('change', handleFileSelect, false);
+        document.getElementById('download').addEventListener('click', handleDownloadButton, false);
+    } else {
+        window.alert("Sorry, this browser is not supported");
+    }
 }());
