@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="styles.css">
+<style>
+</style>
+    <title>MTG Aggregate Deck List</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>MTG Aggregate Deck List</h1>
+      <div>
+        <h3>Select all the decks lists</h3>
+        <input type="file" id="decks" name="decks" multiple="multiple">
+      </div>
+      <div>
+        <h3>Generated deck</h3>
+        <textarea class="form-control" id="aggregated-deck" rows="10"></textarea>
+      </div>
+      <div>
+        <button type="button" class="btn btn-primary" id="download">Download deck</button>
+        <h4>What is this?</h4>
+        <p>
+          This is a way to generate an average deck list from an archetype by using the algorithm
+          described by Frank Karsten in his article 
+          <a href="https://www.channelfireball.com/articles/magic-math-a-new-way-to-determine-an-aggregate-deck-list-rg-dragons/">A New Way to Determine an Aggregate Deck List</a>.
+        </p>
+        <footer>
+            by <a href="http://twitter.com/4lb0">Albo</a> -
+            <a href="">Github code</a>
+        </footer>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
