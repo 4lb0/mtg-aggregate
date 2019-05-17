@@ -151,7 +151,8 @@
         document.body.removeChild(element);
     }
 
-    if (window.FileReader) {
+    var supportsMultipleFiles = 'multiple' in document.createElement('input');
+    if (supportsMultipleFiles && window.FileReader) {
         document.getElementById('decks').addEventListener('change', handleFileSelect, false);
         document.getElementById('download').addEventListener('click', handleDownloadButton, false);
     } else {
