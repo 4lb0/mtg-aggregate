@@ -24,3 +24,7 @@ Then upload the lists and that's it.
 * Why the app is so ugly?
 
   I want to make a fast site and also I am not a designer.
+
+* Is this sponsored by [Cardhoarder](https://www.cardhoarder.com/r/57f887e939c90)?
+
+  No, I just add my referral code. 
