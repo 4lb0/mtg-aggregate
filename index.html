@@ -6,23 +6,23 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-<style>
-</style>
     <title>MTG Aggregate Deck List</title>
   </head>
   <body>
     <div class="container">
-      <h1><img src="logo.png" alt=""> MTG Aggregate Deck List</h1>
-      <div>
+      <header>
+        <h1><img src="logo.png" alt=""> MTG Aggregate Deck List</h1>
+      </header>
+      <section>
         <h2>Select all the decks lists</h2>
         <input type="file" id="decks" name="decks" multiple="multiple">
         <a class="right" href="https://github.com/4lb0/mtg-aggregate/blob/master/README.md#how-to-use" target="_blank">Need help?</a>
-      </div>
-      <div>
+      </section>
+      <section>
         <h2>Generated deck</h2>
         <textarea class="form-control" id="aggregated-deck" rows="10"></textarea>
-      </div>
-      <div>
+      </section>
+      <section>
         <p>
           <button type="button" class="btn btn-primary" id="download">Download deck</button>
         </p>
@@ -35,11 +35,11 @@
           described by Frank Karsten in his article 
           <a href="https://www.channelfireball.com/articles/magic-math-a-new-way-to-determine-an-aggregate-deck-list-rg-dragons/">A New Way to Determine an Aggregate Deck List</a>.
         </p>
-        <footer>
-            by <a href="http://twitter.com/4lb0">Albo</a> -
-            <a href="https://github.com/4lb0/mtg-aggregate">Github code</a>
-        </footer>
-      </div>
+      </section>
+      <footer>
+        by <a href="http://twitter.com/4lb0">Albo</a> -
+        <a href="https://github.com/4lb0/mtg-aggregate">Github code</a>
+      </footer>
     </div>
     <script src="app.js"></script>
   </body>
