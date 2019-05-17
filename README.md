@@ -1,4 +1,4 @@
-# MTG Aggregate
+# [MTG Aggregate](https://4lb0.github.io/mtg-aggregate/)
 An app to generate an average deck list from an archetype.
 
 ## What is this?
@@ -14,6 +14,8 @@ First go to a site like [MTG Goldfish](http://mtggoldfish.com/) to download all 
 Then upload the lists and that's it.
 
 ![Use app](https://raw.githubusercontent.com/4lb0/mtg-aggregate/master/use-app.gif)
+
+Go to the [app](https://4lb0.github.io/mtg-aggregate/)
 
 ## FAQ
 
