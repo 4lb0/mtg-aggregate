@@ -3,7 +3,7 @@ An app to generate an average deck list from an archetype.
 
 ## What is this?
 
-This is a way to generate an average deck list from an archetype by using the algorithm described by Frank Karsten in his article [A New Way to Determine an Aggregate Deck List](https://www.channelfireball.com/articles/magic-math-a-new-way-to-determine-an-aggregate-deck-list-rg-dragons/).
+This is a way to generate an average deck list from an archetype by using the algorithm described by Frank Karsten in his article [A New Way to Determine an Aggregate Deck List](https://web.archive.org/web/20201111223914/https://www.channelfireball.com/articles/magic-math-a-new-way-to-determine-an-aggregate-deck-list-rg-dragons/).
 
 ## How to use
 
