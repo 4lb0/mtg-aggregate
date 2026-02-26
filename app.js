@@ -125,17 +125,6 @@
         return allCards;
     }
 
-    function sumPokemonCards(allCards, cards)
-    {
-        for (var card in cards) {
-            if (!allCards[card]) {
-                allCards[card] = 0;
-            }
-            allCards[card] += cards[card];
-        }
-        return allCards;
-    }
-
     function sortCards(cards)
     {
         var list = [];
@@ -170,20 +159,112 @@
         }
         return deckAsArray;
     }
-    
-    function aggregatePokemonSection(cards)
+
+    // Combine all Pokemon cards (pokemon, trainer, energy) into one pool
+    function combineAllPokemonCards(pokemon, trainer, energy)
     {
-        var deck = {};
-        for (var card in cards) {
-            deck[card] = cards[card];
+        var allCards = {};
+        var card;
+        for (card in pokemon) {
+            allCards[card] = {count: pokemon[card], section: 'pokemon'};
         }
-        var deckAsArray = [];
-        for (card in deck) {
-            deckAsArray.push({total: deck[card], card: card});
+        for (card in trainer) {
+            allCards[card] = {count: trainer[card], section: 'trainer'};
         }
-        return deckAsArray.sort(function (a, b) {
-            return b.total - a.total;
+        for (card in energy) {
+            allCards[card] = {count: energy[card], section: 'energy'};
+        }
+        return allCards;
+    }
+
+    function aggregatePokemonDeck(cards)
+    {
+        var numbered = [];
+        var card;
+        
+        // Create numbered entries for each card copy across all sections
+        for (card in cards) {
+            for (var i = 1; i <= cards[card].count; i++) {
+                numbered.push({
+                    number: i,
+                    name: card,
+                    section: cards[card].section
+                });
+            }
+        }
+        
+        // Count frequency of each numbered entry
+        var counts = {};
+        for (var j = 0; j < numbered.length; j++) {
+            var key = numbered[j].number + " " + numbered[j].name;
+            if (!counts[key]) {
+                counts[key] = {count: 0, name: numbered[j].name, section: numbered[j].section};
+            }
+            counts[key].count++;
+        }
+        
+        // Sort by frequency
+        var sorted = [];
+        for (var k in counts) {
+            sorted.push(counts[k]);
+        }
+        sorted.sort(function (a, b) {
+            return b.count - a.count;
         });
+        
+        // Take top 60, respecting 4-copy limit per card
+        var deck = {pokemon: {}, trainer: {}, energy: {}};
+        var total = 0;
+        var cardCounts = {};
+        
+        for (var m = 0; m < sorted.length; m++) {
+            var cardName = sorted[m].name;
+            var section = sorted[m].section;
+            
+            if (!cardCounts[cardName]) {
+                cardCounts[cardName] = 0;
+            }
+            
+            // Max 4 copies of any card
+            if (cardCounts[cardName] >= 4) {
+                continue;
+            }
+            
+            if (!deck[section][cardName]) {
+                deck[section][cardName] = 0;
+            }
+            deck[section][cardName]++;
+            cardCounts[cardName]++;
+            total++;
+            
+            if (total >= 60) {
+                break;
+            }
+        }
+        
+        // Convert to sorted arrays
+        var result = {
+            pokemon: [],
+            trainer: [],
+            energy: []
+        };
+        
+        for (card in deck.pokemon) {
+            result.pokemon.push({total: deck.pokemon[card], card: card});
+        }
+        for (card in deck.trainer) {
+            result.trainer.push({total: deck.trainer[card], card: card});
+        }
+        for (card in deck.energy) {
+            result.energy.push({total: deck.energy[card], card: card});
+        }
+        
+        // Sort each section by count descending
+        result.pokemon.sort(function (a, b) { return b.total - a.total; });
+        result.trainer.sort(function (a, b) { return b.total - a.total; });
+        result.energy.sort(function (a, b) { return b.total - a.total; });
+        
+        return result;
     }
 
     function printDeck(main, sideboard)
@@ -191,29 +272,29 @@
         return printCards(main) + "\n" + printCards(sideboard);
     }
     
-    function printPokemonDeck(pokemon, trainer, energy)
+    function printPokemonDeck(deck)
     {
         var output = "";
         var pokemonTotal = 0;
         var trainerTotal = 0;
         var energyTotal = 0;
         
-        for (var i = 0; i < pokemon.length; i++) {
-            pokemonTotal += pokemon[i].total;
+        for (var i = 0; i < deck.pokemon.length; i++) {
+            pokemonTotal += deck.pokemon[i].total;
         }
-        for (i = 0; i < trainer.length; i++) {
-            trainerTotal += trainer[i].total;
+        for (i = 0; i < deck.trainer.length; i++) {
+            trainerTotal += deck.trainer[i].total;
         }
-        for (i = 0; i < energy.length; i++) {
-            energyTotal += energy[i].total;
+        for (i = 0; i < deck.energy.length; i++) {
+            energyTotal += deck.energy[i].total;
         }
         
         output += "Pokémon: " + pokemonTotal + "\n";
-        output += printCards(pokemon);
+        output += printCards(deck.pokemon);
         output += "\nTrainer: " + trainerTotal + "\n";
-        output += printCards(trainer);
+        output += printCards(deck.trainer);
         output += "\nEnergy: " + energyTotal + "\n";
-        output += printCards(energy);
+        output += printCards(deck.energy);
         
         return output;
     }
@@ -253,9 +334,17 @@
             
             if (deck.format === 'pokemon') {
                 detectedFormat = 'pokemon';
-                allPokemon = sumPokemonCards(allPokemon, deck.pokemon);
-                allTrainer = sumPokemonCards(allTrainer, deck.trainer);
-                allEnergy = sumPokemonCards(allEnergy, deck.energy);
+                // Merge cards from each section
+                var card;
+                for (card in deck.pokemon) {
+                    allPokemon[card] = (allPokemon[card] || 0) + deck.pokemon[card];
+                }
+                for (card in deck.trainer) {
+                    allTrainer[card] = (allTrainer[card] || 0) + deck.trainer[card];
+                }
+                for (card in deck.energy) {
+                    allEnergy[card] = (allEnergy[card] || 0) + deck.energy[card];
+                }
             } else {
                 allMain = sumCards(allMain, numberedCards(deck.main));
                 allSideboard = sumCards(allSideboard, numberedCards(deck.sideboard));
@@ -266,10 +355,9 @@
             // Only update output after all files are processed
             if (filesProcessed === totalFiles) {
                 if (detectedFormat === 'pokemon') {
-                    var pokemon = aggregatePokemonSection(allPokemon);
-                    var trainer = aggregatePokemonSection(allTrainer);
-                    var energy = aggregatePokemonSection(allEnergy);
-                    deck = printPokemonDeck(pokemon, trainer, energy).trim();
+                    var combined = combineAllPokemonCards(allPokemon, allTrainer, allEnergy);
+                    var aggregated = aggregatePokemonDeck(combined);
+                    deck = printPokemonDeck(aggregated).trim();
                 } else {
                     var main = sortCards(allMain);
                     var sideboard = sortCards(allSideboard);
