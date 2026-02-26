@@ -113,6 +113,18 @@
         return numbered;
     }
 
+    // Create numbered entries for Pokemon cards, keeping section info
+    function numberedPokemonCards(cards, section)
+    {
+        var numbered = [];
+        for (var card in cards) {
+            for (var i = 1; i <= cards[card]; i++) {
+                numbered.push({key: i + " " + card, name: card, section: section});
+            }
+        }
+        return numbered;
+    }
+
     function sumCards(allCards, deck)
     {    
         for (var i = 0; i < deck.length; i++) {
@@ -160,53 +172,26 @@
         return deckAsArray;
     }
 
-    // Combine all Pokemon cards (pokemon, trainer, energy) into one pool
-    function combineAllPokemonCards(pokemon, trainer, energy)
+    // Sum numbered Pokemon cards across all decks
+    function sumPokemonCards(allCards, deck)
     {
-        var allCards = {};
-        var card;
-        for (card in pokemon) {
-            allCards[card] = {count: pokemon[card], section: 'pokemon'};
-        }
-        for (card in trainer) {
-            allCards[card] = {count: trainer[card], section: 'trainer'};
-        }
-        for (card in energy) {
-            allCards[card] = {count: energy[card], section: 'energy'};
+        for (var i = 0; i < deck.length; i++) {
+            var card = deck[i];
+            var key = card.key;
+            if (!allCards[key]) {
+                allCards[key] = {count: 0, name: card.name, section: card.section};
+            }
+            allCards[key].count++;
         }
         return allCards;
     }
 
     function aggregatePokemonDeck(cards)
     {
-        var numbered = [];
-        var card;
-        
-        // Create numbered entries for each card copy across all sections
-        for (card in cards) {
-            for (var i = 1; i <= cards[card].count; i++) {
-                numbered.push({
-                    number: i,
-                    name: card,
-                    section: cards[card].section
-                });
-            }
-        }
-        
-        // Count frequency of each numbered entry
-        var counts = {};
-        for (var j = 0; j < numbered.length; j++) {
-            var key = numbered[j].number + " " + numbered[j].name;
-            if (!counts[key]) {
-                counts[key] = {count: 0, name: numbered[j].name, section: numbered[j].section};
-            }
-            counts[key].count++;
-        }
-        
-        // Sort by frequency
+        // Sort by frequency (count)
         var sorted = [];
-        for (var k in counts) {
-            sorted.push(counts[k]);
+        for (var key in cards) {
+            sorted.push(cards[key]);
         }
         sorted.sort(function (a, b) {
             return b.count - a.count;
@@ -217,9 +202,9 @@
         var total = 0;
         var cardCounts = {};
         
-        for (var m = 0; m < sorted.length; m++) {
-            var cardName = sorted[m].name;
-            var section = sorted[m].section;
+        for (var i = 0; i < sorted.length; i++) {
+            var cardName = sorted[i].name;
+            var section = sorted[i].section;
             
             if (!cardCounts[cardName]) {
                 cardCounts[cardName] = 0;
@@ -249,7 +234,7 @@
             energy: []
         };
         
-        for (card in deck.pokemon) {
+        for (var card in deck.pokemon) {
             result.pokemon.push({total: deck.pokemon[card], card: card});
         }
         for (card in deck.trainer) {
@@ -313,9 +298,7 @@
         var files = event.target.files;
         var allMain = {};
         var allSideboard = {};
-        var allPokemon = {};
-        var allTrainer = {};
-        var allEnergy = {};
+        var allPokemonCards = {};
         var detectedFormat = 'mtg';
         
         var handleError = function () {
@@ -334,17 +317,14 @@
             
             if (deck.format === 'pokemon') {
                 detectedFormat = 'pokemon';
-                // Merge cards from each section
-                var card;
-                for (card in deck.pokemon) {
-                    allPokemon[card] = (allPokemon[card] || 0) + deck.pokemon[card];
-                }
-                for (card in deck.trainer) {
-                    allTrainer[card] = (allTrainer[card] || 0) + deck.trainer[card];
-                }
-                for (card in deck.energy) {
-                    allEnergy[card] = (allEnergy[card] || 0) + deck.energy[card];
-                }
+                // Create numbered entries for each deck, then sum frequencies
+                var pokemonNumbered = numberedPokemonCards(deck.pokemon, 'pokemon');
+                var trainerNumbered = numberedPokemonCards(deck.trainer, 'trainer');
+                var energyNumbered = numberedPokemonCards(deck.energy, 'energy');
+                
+                allPokemonCards = sumPokemonCards(allPokemonCards, pokemonNumbered);
+                allPokemonCards = sumPokemonCards(allPokemonCards, trainerNumbered);
+                allPokemonCards = sumPokemonCards(allPokemonCards, energyNumbered);
             } else {
                 allMain = sumCards(allMain, numberedCards(deck.main));
                 allSideboard = sumCards(allSideboard, numberedCards(deck.sideboard));
@@ -355,8 +335,7 @@
             // Only update output after all files are processed
             if (filesProcessed === totalFiles) {
                 if (detectedFormat === 'pokemon') {
-                    var combined = combineAllPokemonCards(allPokemon, allTrainer, allEnergy);
-                    var aggregated = aggregatePokemonDeck(combined);
+                    var aggregated = aggregatePokemonDeck(allPokemonCards);
                     deck = printPokemonDeck(aggregated).trim();
                 } else {
                     var main = sortCards(allMain);
