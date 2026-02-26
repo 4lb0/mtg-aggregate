@@ -125,6 +125,17 @@
         return allCards;
     }
 
+    function sumPokemonCards(allCards, cards)
+    {
+        for (var card in cards) {
+            if (!allCards[card]) {
+                allCards[card] = 0;
+            }
+            allCards[card] += cards[card];
+        }
+        return allCards;
+    }
+
     function sortCards(cards)
     {
         var list = [];
@@ -242,9 +253,9 @@
             
             if (deck.format === 'pokemon') {
                 detectedFormat = 'pokemon';
-                allPokemon = sumCards(allPokemon, numberedCards(deck.pokemon));
-                allTrainer = sumCards(allTrainer, numberedCards(deck.trainer));
-                allEnergy = sumCards(allEnergy, numberedCards(deck.energy));
+                allPokemon = sumPokemonCards(allPokemon, deck.pokemon);
+                allTrainer = sumPokemonCards(allTrainer, deck.trainer);
+                allEnergy = sumPokemonCards(allEnergy, deck.energy);
             } else {
                 allMain = sumCards(allMain, numberedCards(deck.main));
                 allSideboard = sumCards(allSideboard, numberedCards(deck.sideboard));
